@@ -5,7 +5,7 @@
       <div class="flex items-center space-x-2">
         <router-link to="/" class="text-grafana-muted hover:text-white flex items-center space-x-1">
           <ArrowLeft class="w-3.5 h-3.5" />
-          <span>Overview</span>
+          <span>{{ t('overview') }}</span>
         </router-link>
         <span class="text-grafana-darkmuted">|</span>
         <img
@@ -14,28 +14,28 @@
           class="w-4 h-3 object-cover rounded-xs border border-white/10"
         />
         <span class="font-bold text-sm text-white">{{ server.name }}</span>
-        <span class="text-grafana-muted">({{ server.os }} / {{ server.arch }})</span>
+        <span class="text-grafana-muted text-[11px]">({{ server.os }} / {{ server.arch }})</span>
       </div>
 
-      <div class="flex items-center space-x-3 text-grafana-muted text-[11px]">
-        <span>Kernel: <b class="text-grafana-text font-mono">{{ server.kernel_version || 'N/A' }}</b></span>
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-grafana-muted text-[10px] sm:text-[11px]">
+        <span class="hidden sm:inline">Kernel: <b class="text-grafana-text font-mono">{{ server.kernel_version || 'N/A' }}</b></span>
         <span>CPU: <b class="text-grafana-text font-mono">{{ server.cpu_info }} ({{ server.cpu_cores }} Cores)</b></span>
         <span class="flex items-center space-x-1">
           <span class="w-2 h-2 rounded-full" :class="isOnline ? 'bg-grafana-green animate-pulse' : 'bg-grafana-red'"></span>
-          <span :class="isOnline ? 'text-grafana-green' : 'text-grafana-red'">{{ isOnline ? 'Online' : 'Offline' }}</span>
+          <span :class="isOnline ? 'text-grafana-green' : 'text-grafana-red'">{{ isOnline ? t('online') : t('offline') }}</span>
         </span>
       </div>
     </div>
 
-    <!-- ROW 1: Memory & Power Metrics (5 Columns) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2.5">
+    <!-- ROW 1: Memory & Power Metrics (5 Columns on Desktop, 1 or 2 on Mobile) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-2.5">
       <!-- Panel 1: Primary Memory Usage (%) Donut -->
-      <GrafanaPanel title="Node Memory Usage (%)">
+      <GrafanaPanel :title="t('nodeMemoryUsage')">
         <DonutChart :items="primaryMemoryDonut" />
       </GrafanaPanel>
 
       <!-- Panel 2: Memory History Time Series -->
-      <GrafanaPanel title="Memory History" timeBadge="Live">
+      <GrafanaPanel :title="t('memoryHistory')" :time-badge="t('live')">
         <TimeSeriesChart
           :series-list="memoryHistorySeries"
           :timestamps="historyTimestamps"
@@ -45,13 +45,13 @@
       </GrafanaPanel>
 
       <!-- Panel 3: Memory Clock & Latency -->
-      <GrafanaPanel title="Memory Timing & Latency">
+      <GrafanaPanel :title="t('memoryTiming')">
         <StatCard
           value="4091"
           unit="MHz"
           size="lg"
           color="blue"
-          label="Memory Frequency"
+          :label="t('memoryFreq')"
           glow
           :sub-stats="[
             { label: 'TCAS', value: '18' },
@@ -63,7 +63,7 @@
       </GrafanaPanel>
 
       <!-- Panel 4: System Power Metrics -->
-      <GrafanaPanel title="System Power Metrics" timeBadge="Realtime">
+      <GrafanaPanel :title="t('systemPowerMetrics')" :time-badge="t('live')">
         <TimeSeriesChart
           :series-list="powerMetricsSeries"
           :timestamps="historyTimestamps"
@@ -72,16 +72,16 @@
       </GrafanaPanel>
 
       <!-- Panel 5: Secondary Memory / Swap Usage (%) Donut -->
-      <GrafanaPanel title="Swap / Secondary Memory (%)">
+      <GrafanaPanel :title="t('swapUsage')">
         <DonutChart :items="swapMemoryDonut" />
       </GrafanaPanel>
     </div>
 
-    <!-- ROW 2: Uptime, CPU Usage & Frequency (5 Columns) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2.5">
+    <!-- ROW 2: Uptime, CPU Usage & Frequency (5 Columns on Desktop) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-2.5">
       <!-- Panel 6: Host Uptime & CPU Freq -->
-      <div class="flex flex-col space-y-2.5">
-        <GrafanaPanel title="Host Uptime" custom-class="h-28">
+      <div class="flex flex-col space-y-2 sm:space-y-2.5">
+        <GrafanaPanel :title="t('hostUptime')" custom-class="h-28">
           <StatCard
             :value="uptimeFormatted"
             size="md"
@@ -89,7 +89,7 @@
             glow
           />
         </GrafanaPanel>
-        <GrafanaPanel title="Host CPU Frequency" custom-class="flex-1 min-h-[110px]">
+        <GrafanaPanel :title="t('hostCpuFreq')" custom-class="flex-1 min-h-[110px]">
           <BarGauge
             :bars="hostCpuBars"
             orientation="horizontal"
@@ -98,7 +98,7 @@
       </div>
 
       <!-- Panel 7: Multi-core CPU Usage (%) Time Series -->
-      <GrafanaPanel title="CPU Usage (%)" timeBadge="24h">
+      <GrafanaPanel :title="t('cpuUsage')" time-badge="24h">
         <TimeSeriesChart
           :series-list="cpuUsageSeries"
           :timestamps="historyTimestamps"
@@ -110,15 +110,15 @@
       </GrafanaPanel>
 
       <!-- Panel 8: Server Uptime & CPU Frequency -->
-      <div class="flex flex-col space-y-2.5">
-        <GrafanaPanel title="Server System Uptime" custom-class="h-28">
+      <div class="flex flex-col space-y-2 sm:space-y-2.5">
+        <GrafanaPanel :title="t('serverSystemUptime')" custom-class="h-28">
           <StatCard
             :value="uptimeFormatted"
             size="md"
             color="white"
           />
         </GrafanaPanel>
-        <GrafanaPanel title="CPU Frequency Distribution" custom-class="flex-1 min-h-[110px]">
+        <GrafanaPanel :title="t('cpuFreqDist')" custom-class="flex-1 min-h-[110px]">
           <BarGauge
             :bars="verticalCpuBars"
             orientation="vertical"
@@ -127,15 +127,15 @@
       </div>
 
       <!-- Panel 9: CPU Power & Voltage -->
-      <div class="flex flex-col space-y-2.5">
-        <GrafanaPanel title="CPU Package Power" custom-class="h-28">
+      <div class="flex flex-col space-y-2 sm:space-y-2.5">
+        <GrafanaPanel :title="t('cpuPower')" custom-class="h-28">
           <TimeSeriesChart
             :series-list="cpuPowerSeries"
             :timestamps="historyTimestamps.slice(-12)"
             unit="W"
           />
         </GrafanaPanel>
-        <GrafanaPanel title="CPU Core Voltage" custom-class="flex-1 min-h-[110px]">
+        <GrafanaPanel :title="t('cpuVoltage')" custom-class="flex-1 min-h-[110px]">
           <StatCard
             value="918.749"
             unit="mV"
@@ -147,15 +147,15 @@
       </div>
 
       <!-- Panel 10: Secondary Uptime & Frequency -->
-      <div class="flex flex-col space-y-2.5">
-        <GrafanaPanel title="Agent Uptime" custom-class="h-28">
+      <div class="flex flex-col space-y-2 sm:space-y-2.5">
+        <GrafanaPanel :title="t('agentUptime')" custom-class="h-28">
           <StatCard
             value="1 d 14:45:38"
             size="md"
             color="purple"
           />
         </GrafanaPanel>
-        <GrafanaPanel title="Core Frequency (ARM)" custom-class="flex-1 min-h-[110px]">
+        <GrafanaPanel :title="t('coreFreqArm')" custom-class="flex-1 min-h-[110px]">
           <BarGauge
             :bars="secondaryCpuBars"
             orientation="horizontal"
@@ -165,34 +165,34 @@
     </div>
 
     <!-- ROW 3: Core Breakdown, System Temperatures & Ping Latency -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
       <!-- Panel 11: Host CPU Usage Multi-stat Card -->
-      <GrafanaPanel title="Core Utilization (%)">
-        <div class="grid grid-cols-2 gap-3 py-2 w-full h-full">
+      <GrafanaPanel :title="t('coreUtilization')">
+        <div class="grid grid-cols-2 gap-2 sm:gap-3 py-2 w-full h-full">
           <div class="bg-[#141519] border border-[#22252b] rounded p-2 text-center">
             <span class="text-[10px] text-grafana-muted block mb-0.5">CPU 0</span>
-            <span class="text-2xl font-bold tabular-nums text-grafana-green glow-green">{{ currentCoreLoads[0] }}%</span>
+            <span class="text-xl sm:text-2xl font-bold tabular-nums text-grafana-green glow-green">{{ currentCoreLoads[0] }}%</span>
             <div class="h-1 bg-[#1c1e24] mt-2 rounded overflow-hidden">
               <div class="h-full bg-grafana-green" :style="{ width: `${currentCoreLoads[0]}%` }"></div>
             </div>
           </div>
           <div class="bg-[#141519] border border-[#22252b] rounded p-2 text-center">
             <span class="text-[10px] text-grafana-muted block mb-0.5">CPU 1</span>
-            <span class="text-2xl font-bold tabular-nums text-grafana-yellow glow-orange">{{ currentCoreLoads[1] }}%</span>
+            <span class="text-xl sm:text-2xl font-bold tabular-nums text-grafana-yellow glow-orange">{{ currentCoreLoads[1] }}%</span>
             <div class="h-1 bg-[#1c1e24] mt-2 rounded overflow-hidden">
               <div class="h-full bg-grafana-yellow" :style="{ width: `${currentCoreLoads[1]}%` }"></div>
             </div>
           </div>
           <div class="bg-[#141519] border border-[#22252b] rounded p-2 text-center">
             <span class="text-[10px] text-grafana-muted block mb-0.5">CPU 2</span>
-            <span class="text-2xl font-bold tabular-nums text-grafana-blue glow-blue">{{ currentCoreLoads[2] }}%</span>
+            <span class="text-xl sm:text-2xl font-bold tabular-nums text-grafana-blue glow-blue">{{ currentCoreLoads[2] }}%</span>
             <div class="h-1 bg-[#1c1e24] mt-2 rounded overflow-hidden">
               <div class="h-full bg-grafana-blue" :style="{ width: `${currentCoreLoads[2]}%` }"></div>
             </div>
           </div>
           <div class="bg-[#141519] border border-[#22252b] rounded p-2 text-center">
             <span class="text-[10px] text-grafana-muted block mb-0.5">CPU 3</span>
-            <span class="text-2xl font-bold tabular-nums text-grafana-orange">{{ currentCoreLoads[3] }}%</span>
+            <span class="text-xl sm:text-2xl font-bold tabular-nums text-grafana-orange">{{ currentCoreLoads[3] }}%</span>
             <div class="h-1 bg-[#1c1e24] mt-2 rounded overflow-hidden">
               <div class="h-full bg-grafana-orange" :style="{ width: `${currentCoreLoads[3]}%` }"></div>
             </div>
@@ -201,7 +201,7 @@
       </GrafanaPanel>
 
       <!-- Panel 12: System Temperature (°C) -->
-      <GrafanaPanel title="System Temperature (°C)" timeBadge="Sensors">
+      <GrafanaPanel :title="t('systemTemp')" :time-badge="t('sensors')">
         <TimeSeriesChart
           :series-list="temperatureSeries"
           :timestamps="historyTimestamps"
@@ -210,8 +210,8 @@
         />
       </GrafanaPanel>
 
-      <!-- Panel 13: Ping Latency Lines (China Telecom, Unicom, Mobile, BGP) -->
-      <GrafanaPanel title="Network Route Latency (Ping RTT)" timeBadge="Last 24h">
+      <!-- Panel 13: Ping Latency Lines -->
+      <GrafanaPanel :title="t('networkLatency')" time-badge="24h">
         <TimeSeriesChart
           :series-list="pingLatencySeries"
           :timestamps="pingTimestamps"
@@ -221,32 +221,32 @@
       </GrafanaPanel>
 
       <!-- Panel 14: Secondary CPU Usage Multi-stat -->
-      <GrafanaPanel title="Auxiliary Core Loads (%)">
-        <div class="grid grid-cols-2 gap-3 py-2 w-full h-full">
+      <GrafanaPanel :title="t('auxCoreLoads')">
+        <div class="grid grid-cols-2 gap-2 sm:gap-3 py-2 w-full h-full">
           <div class="bg-[#141519] border border-[#22252b] rounded p-2 text-center">
             <span class="text-[10px] text-grafana-muted block mb-0.5">Cluster Core 0</span>
-            <span class="text-2xl font-bold tabular-nums text-grafana-green">{{ auxCoreLoads[0] }}%</span>
+            <span class="text-xl sm:text-2xl font-bold tabular-nums text-grafana-green">{{ auxCoreLoads[0] }}%</span>
           </div>
           <div class="bg-[#141519] border border-[#22252b] rounded p-2 text-center">
             <span class="text-[10px] text-grafana-muted block mb-0.5">Cluster Core 1</span>
-            <span class="text-2xl font-bold tabular-nums text-grafana-yellow">{{ auxCoreLoads[1] }}%</span>
+            <span class="text-xl sm:text-2xl font-bold tabular-nums text-grafana-yellow">{{ auxCoreLoads[1] }}%</span>
           </div>
           <div class="bg-[#141519] border border-[#22252b] rounded p-2 text-center">
             <span class="text-[10px] text-grafana-muted block mb-0.5">Cluster Core 2</span>
-            <span class="text-2xl font-bold tabular-nums text-grafana-blue">{{ auxCoreLoads[2] }}%</span>
+            <span class="text-xl sm:text-2xl font-bold tabular-nums text-grafana-blue">{{ auxCoreLoads[2] }}%</span>
           </div>
           <div class="bg-[#141519] border border-[#22252b] rounded p-2 text-center">
             <span class="text-[10px] text-grafana-muted block mb-0.5">Cluster Core 3</span>
-            <span class="text-2xl font-bold tabular-nums text-grafana-purple">{{ auxCoreLoads[3] }}%</span>
+            <span class="text-xl sm:text-2xl font-bold tabular-nums text-grafana-purple">{{ auxCoreLoads[3] }}%</span>
           </div>
         </div>
       </GrafanaPanel>
     </div>
 
     <!-- ROW 4: GPU & Power / Energy Generation -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
       <!-- Panel 15: GPU / VRAM Usage (%) -->
-      <GrafanaPanel title="GPU / VRAM Usage (%)">
+      <GrafanaPanel :title="t('gpuUsage')">
         <TimeSeriesChart
           :series-list="gpuUsageSeries"
           :timestamps="historyTimestamps"
@@ -257,7 +257,7 @@
 
       <!-- Panel 16: GPU Frequency & Power Metrics -->
       <div class="grid grid-cols-2 gap-2">
-        <GrafanaPanel title="GPU Voltage" custom-class="h-full">
+        <GrafanaPanel :title="t('gpuVoltage')" custom-class="h-full">
           <StatCard
             value="0.04720"
             unit="V"
@@ -266,7 +266,7 @@
             glow
           />
         </GrafanaPanel>
-        <GrafanaPanel title="GPU Fan & Power" custom-class="h-full">
+        <GrafanaPanel :title="t('gpuFanPower')" custom-class="h-full">
           <StatCard
             value="0"
             unit="RPM"
@@ -281,8 +281,8 @@
       </div>
 
       <!-- Panel 17: Energy Generation / Power Trend -->
-      <div class="lg:col-span-2">
-        <GrafanaPanel title="Energy Consumption & Power Flow" timeBadge="Today so far">
+      <div class="sm:col-span-2 lg:col-span-2">
+        <GrafanaPanel :title="t('energyConsumption')" :time-badge="t('todaySoFar')">
           <TimeSeriesChart
             :series-list="energySeries"
             :timestamps="historyTimestamps"
@@ -294,9 +294,9 @@
     </div>
 
     <!-- ROW 5: Storage & Bandwidth Mirror Charts (Matches Bottom of image.png) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-2.5">
       <!-- Panel 18: Partition Usage (%) Vertical Water Levels -->
-      <GrafanaPanel title="Partition Usage (%)">
+      <GrafanaPanel :title="t('partitionUsage')">
         <BarGauge
           :bars="partitionBars"
           orientation="vertical"
@@ -304,7 +304,7 @@
       </GrafanaPanel>
 
       <!-- Panel 19: Disk Temperature / IOPS -->
-      <GrafanaPanel title="Disk Temperature (°C)">
+      <GrafanaPanel :title="t('diskTemp')">
         <TimeSeriesChart
           :series-list="diskTempSeries"
           :timestamps="historyTimestamps"
@@ -314,25 +314,25 @@
       </GrafanaPanel>
 
       <!-- Panel 20: Drive Health Status (%) -->
-      <GrafanaPanel title="Drive Health Status (%)">
+      <GrafanaPanel :title="t('driveHealth')">
         <div class="flex flex-col justify-around h-full py-1 space-y-2">
           <div class="flex items-center justify-between border-b border-[#22252a] pb-1">
             <span class="text-xs text-grafana-text font-semibold">SSD: Patriot Burst</span>
-            <span class="text-xl font-bold tabular-nums text-grafana-blue">96<span class="text-xs">%</span></span>
+            <span class="text-lg sm:text-xl font-bold tabular-nums text-grafana-blue">96<span class="text-xs">%</span></span>
           </div>
           <div class="flex items-center justify-between border-b border-[#22252a] pb-1">
             <span class="text-xs text-grafana-text font-semibold">SSD: SSV5</span>
-            <span class="text-xl font-bold tabular-nums text-grafana-green glow-green">100<span class="text-xs">%</span></span>
+            <span class="text-lg sm:text-xl font-bold tabular-nums text-grafana-green glow-green">100<span class="text-xs">%</span></span>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-xs text-grafana-text font-semibold">NVME: SN750</span>
-            <span class="text-xl font-bold tabular-nums text-grafana-green glow-green">100<span class="text-xs">%</span></span>
+            <span class="text-lg sm:text-xl font-bold tabular-nums text-grafana-green glow-green">100<span class="text-xs">%</span></span>
           </div>
         </div>
       </GrafanaPanel>
 
       <!-- Panel 21: Disk Usage (Read / Write Symmetrical Mirror Chart) -->
-      <GrafanaPanel title="Disk Usage (Write / Read)">
+      <GrafanaPanel :title="t('diskUsageMirror')">
         <TimeSeriesChart
           :series-list="diskUsageMirrorSeries"
           :timestamps="historyTimestamps"
@@ -341,7 +341,7 @@
       </GrafanaPanel>
 
       <!-- Panel 22: Bandwidth Usage (Download / Upload Symmetrical Mirror Chart) -->
-      <GrafanaPanel title="Bandwidth Usage (Download / Upload)">
+      <GrafanaPanel :title="t('bandwidthMirror')">
         <TimeSeriesChart
           :series-list="bandwidthMirrorSeries"
           :timestamps="historyTimestamps"
@@ -362,6 +362,7 @@ import TimeSeriesChart, { type SeriesConfig } from '../components/grafana/TimeSe
 import BarGauge, { type BarItem } from '../components/grafana/BarGauge.vue';
 import type { Server, HistoryMetricRow } from '../types';
 import { formatBytes, formatUptime, getFlagUrl, isServerOnline } from '../utils/format';
+import { t } from '../utils/i18n';
 
 const props = defineProps<{
   server: Server;
@@ -371,7 +372,6 @@ const props = defineProps<{
 const isOnline = computed(() => isServerOnline(props.server));
 const uptimeFormatted = computed(() => formatUptime(props.server.boot_time));
 
-// Core dynamic loads
 const currentCoreLoads = computed(() => {
   const base = Math.min(100, Math.max(2, props.server.cpu || 8));
   return [
@@ -386,7 +386,6 @@ const auxCoreLoads = computed(() => {
   return [6, 8, 5, 5];
 });
 
-// Memory Donut
 const primaryMemoryDonut = computed<DonutItem[]>(() => {
   const total = props.server.ram_total || 4096;
   const used = props.server.ram_used || 1200;
@@ -399,25 +398,25 @@ const primaryMemoryDonut = computed<DonutItem[]>(() => {
 
   return [
     {
-      name: 'Available',
+      name: t('available'),
       value: available,
       percent: availPct,
       formatted: formatBytes(available * 1024 * 1024),
-      color: '#5794F2' // Blue
+      color: '#5794F2'
     },
     {
-      name: 'Used',
+      name: t('used'),
       value: used,
       percent: usedPct,
       formatted: formatBytes(used * 1024 * 1024),
-      color: '#F2495C' // Red
+      color: '#F2495C'
     },
     {
-      name: 'Reserved',
+      name: t('reserved'),
       value: reserved,
       percent: resPct,
       formatted: formatBytes(reserved * 1024 * 1024),
-      color: '#8e8e99' // Gray
+      color: '#8e8e99'
     }
   ];
 });
@@ -431,23 +430,22 @@ const swapMemoryDonut = computed<DonutItem[]>(() => {
 
   return [
     {
-      name: 'Available',
+      name: t('available'),
       value: available,
       percent: availPct,
       formatted: formatBytes(available * 1024 * 1024),
-      color: '#73BF69' // Green
+      color: '#73BF69'
     },
     {
-      name: 'Used',
+      name: t('used'),
       value: used,
       percent: usedPct,
       formatted: formatBytes(used * 1024 * 1024),
-      color: '#5794F2' // Blue
+      color: '#5794F2'
     }
   ];
 });
 
-// CPU Bars
 const hostCpuBars = computed<BarItem[]>(() => {
   return [
     { label: 'CPU 0', percent: 85, valueFormatted: '2.0 GHz', color: '#5794F2' },
@@ -490,7 +488,6 @@ const partitionBars = computed<BarItem[]>(() => {
   ];
 });
 
-// Time Series State
 const historyTimestamps = ref<number[]>([]);
 const memoryHistorySeries = ref<SeriesConfig[]>([]);
 const powerMetricsSeries = ref<SeriesConfig[]>([]);
@@ -512,7 +509,6 @@ const rebuildSeries = () => {
   const ts = h.map(row => row.timestamp);
   historyTimestamps.value = ts;
 
-  // Memory History
   const usedRam = h.map(r => r.ram_used || 1200);
   const physTotal = h.map(() => props.server.ram_total || 4096);
   memoryHistorySeries.value = [
@@ -530,7 +526,6 @@ const rebuildSeries = () => {
     }
   ];
 
-  // Power Metrics
   powerMetricsSeries.value = [
     {
       name: 'Power (W)',
@@ -546,7 +541,6 @@ const rebuildSeries = () => {
     }
   ];
 
-  // CPU Usage
   cpuUsageSeries.value = [
     {
       name: 'CPU Average',
@@ -569,7 +563,6 @@ const rebuildSeries = () => {
     }
   ];
 
-  // CPU Power
   cpuPowerSeries.value = [
     {
       name: 'CPU Power',
@@ -580,7 +573,6 @@ const rebuildSeries = () => {
     }
   ];
 
-  // Temperatures
   temperatureSeries.value = [
     {
       name: 'CPU Socket',
@@ -602,24 +594,23 @@ const rebuildSeries = () => {
     }
   ];
 
-  // Ping Latency
   if (props.server.ping && props.server.ping.length > 0) {
     pingTimestamps.value = props.server.ping.map(p => p.ts);
     pingLatencySeries.value = [
       {
-        name: 'China Telecom',
+        name: t('ct'),
         data: props.server.ping.map(p => Number(p.ct) || 0),
         color: '#5794F2',
         lastValue: `${props.server.ping_ct ?? '-'} ms`
       },
       {
-        name: 'China Unicom',
+        name: t('cu'),
         data: props.server.ping.map(p => Number(p.cu) || 0),
         color: '#FF9830',
         lastValue: `${props.server.ping_cu ?? '-'} ms`
       },
       {
-        name: 'China Mobile',
+        name: t('cm'),
         data: props.server.ping.map(p => Number(p.cm) || 0),
         color: '#73BF69',
         lastValue: `${props.server.ping_cm ?? '-'} ms`
@@ -628,13 +619,12 @@ const rebuildSeries = () => {
   } else {
     pingTimestamps.value = ts;
     pingLatencySeries.value = [
-      { name: 'China Telecom', data: h.map(() => 23), color: '#5794F2', lastValue: '23 ms' },
-      { name: 'China Unicom', data: h.map(() => 25), color: '#FF9830', lastValue: '25 ms' },
-      { name: 'China Mobile', data: h.map(() => 30), color: '#73BF69', lastValue: '30 ms' }
+      { name: t('ct'), data: h.map(() => 23), color: '#5794F2', lastValue: '23 ms' },
+      { name: t('cu'), data: h.map(() => 25), color: '#FF9830', lastValue: '25 ms' },
+      { name: t('cm'), data: h.map(() => 30), color: '#73BF69', lastValue: '30 ms' }
     ];
   }
 
-  // GPU Usage
   gpuUsageSeries.value = [
     {
       name: 'GPU Core',
@@ -650,7 +640,6 @@ const rebuildSeries = () => {
     }
   ];
 
-  // Energy Generation
   energySeries.value = [
     {
       name: 'Current Power',
@@ -661,7 +650,6 @@ const rebuildSeries = () => {
     }
   ];
 
-  // Disk Temp
   diskTempSeries.value = [
     {
       name: 'NVME: SN750',
@@ -683,7 +671,6 @@ const rebuildSeries = () => {
     }
   ];
 
-  // Disk Read/Write Mirror
   diskUsageMirrorSeries.value = [
     {
       name: 'Write',
@@ -699,7 +686,6 @@ const rebuildSeries = () => {
     }
   ];
 
-  // Bandwidth Download/Upload Mirror
   bandwidthMirrorSeries.value = [
     {
       name: 'Download',

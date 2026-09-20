@@ -1,80 +1,80 @@
 <template>
-  <div class="space-y-4">
+  <div class="space-y-3 sm:space-y-4">
     <!-- Cluster Macro Stat Panels (Row 1) -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
       <!-- Total Servers -->
-      <GrafanaPanel title="Total Nodes">
+      <GrafanaPanel :title="t('totalNodes')">
         <StatCard
           :value="stats.total"
-          size="md"
+          size="sm"
           color="white"
-          label="Total Systems"
+          :label="t('totalSystems')"
         />
       </GrafanaPanel>
 
       <!-- Online Status -->
-      <GrafanaPanel title="Online Status">
+      <GrafanaPanel :title="t('onlineStatus')">
         <StatCard
           :value="stats.online"
           unit="UP"
-          size="md"
+          size="sm"
           color="green"
-          label="Active & Healthy"
+          :label="t('activeHealthy')"
           glow
         />
       </GrafanaPanel>
 
       <!-- Offline -->
-      <GrafanaPanel title="Offline Nodes">
+      <GrafanaPanel :title="t('offlineNodes')">
         <StatCard
           :value="stats.offline"
           unit="DOWN"
-          size="md"
+          size="sm"
           :color="stats.offline > 0 ? 'red' : 'green'"
-          label="Unreachable"
+          :label="t('unreachable')"
           :glow="stats.offline > 0"
         />
       </GrafanaPanel>
 
       <!-- Global Net In -->
-      <GrafanaPanel title="Global Download">
+      <GrafanaPanel :title="t('globalDownload')">
         <StatCard
           :value="formatSpeedVal(stats.globalSpeedIn).val"
           :unit="formatSpeedVal(stats.globalSpeedIn).unit"
-          size="md"
+          size="sm"
           color="cyan"
-          label="Aggregated RX"
+          :label="t('aggregatedRx')"
         />
       </GrafanaPanel>
 
       <!-- Global Net Out -->
-      <GrafanaPanel title="Global Upload">
+      <GrafanaPanel :title="t('globalUpload')">
         <StatCard
           :value="formatSpeedVal(stats.globalSpeedOut).val"
           :unit="formatSpeedVal(stats.globalSpeedOut).unit"
-          size="md"
+          size="sm"
           color="blue"
-          label="Aggregated TX"
+          :label="t('aggregatedTx')"
         />
       </GrafanaPanel>
 
       <!-- Total Monthly Net -->
-      <GrafanaPanel title="Total Traffic">
+      <GrafanaPanel :title="t('totalTraffic')">
         <StatCard
           :value="formatBytesVal(stats.globalNetRx + stats.globalNetTx).val"
           :unit="formatBytesVal(stats.globalNetRx + stats.globalNetTx).unit"
-          size="md"
+          size="sm"
           color="purple"
-          label="Combined Flow"
+          :label="t('combinedFlow')"
         />
       </GrafanaPanel>
     </div>
 
     <!-- Cluster Performance Trend Charts (Row 2) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-2.5">
       <!-- Traffic Bandwidth Mirror Chart -->
       <div class="lg:col-span-2">
-        <GrafanaPanel title="Cluster Network Throughput (RX / TX)" timeBadge="Live">
+        <GrafanaPanel :title="t('clusterThroughput')" :time-badge="t('live')">
           <TimeSeriesChart
             :series-list="clusterThroughputSeries"
             :timestamps="throughputTimestamps"
@@ -87,7 +87,7 @@
 
       <!-- Latency & Ping Status -->
       <div>
-        <GrafanaPanel title="Multi-line Latency Overview" timeBadge="Realtime">
+        <GrafanaPanel :title="t('latencyOverview')" :time-badge="t('live')">
           <TimeSeriesChart
             :series-list="latencySeries"
             :timestamps="latencyTimestamps"
@@ -101,17 +101,17 @@
     <!-- Filter & Toolbar -->
     <div class="flex flex-wrap items-center justify-between gap-2 py-1 px-0.5">
       <div class="flex items-center space-x-2">
-        <span class="text-xs font-semibold text-grafana-muted uppercase tracking-wider">Node Matrix</span>
-        <span class="text-xs text-[#52545c]">({{ filteredServers.length }} instances)</span>
+        <span class="text-xs font-semibold text-grafana-muted uppercase tracking-wider">{{ t('nodeMatrix') }}</span>
+        <span class="text-xs text-[#52545c]">({{ filteredServers.length }} {{ t('instances') }})</span>
       </div>
 
-      <div class="flex items-center space-x-2 text-xs">
+      <div class="flex items-center space-x-2 text-xs w-full sm:w-auto">
         <!-- Group filter -->
         <select
           v-model="selectedGroup"
-          class="bg-[#181b1f] border border-[#26292e] text-grafana-text text-xs rounded px-2.5 py-1 focus:outline-none focus:border-grafana-blue cursor-pointer"
+          class="bg-[#181b1f] border border-[#26292e] text-grafana-text text-xs rounded px-2.5 py-1 focus:outline-none focus:border-grafana-blue cursor-pointer flex-1 sm:flex-initial"
         >
-          <option value="">All Groups</option>
+          <option value="">{{ t('allGroups') }}</option>
           <option v-for="g in availableGroups" :key="g" :value="g">{{ g }}</option>
         </select>
 
@@ -119,14 +119,14 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Filter by name, IP, tag..."
-          class="bg-[#181b1f] border border-[#26292e] text-grafana-text text-xs rounded px-2.5 py-1 focus:outline-none focus:border-grafana-blue placeholder-[#555963] w-48"
+          :placeholder="t('filterPlaceholder')"
+          class="bg-[#181b1f] border border-[#26292e] text-grafana-text text-xs rounded px-2.5 py-1 focus:outline-none focus:border-grafana-blue placeholder-[#555963] flex-1 sm:w-48"
         />
       </div>
     </div>
 
     <!-- Node Matrix Grid (Cards) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
       <ServerCard
         v-for="server in filteredServers"
         :key="server.id"
@@ -144,6 +144,7 @@ import TimeSeriesChart, { type SeriesConfig } from '../components/grafana/TimeSe
 import ServerCard from '../components/ServerCard.vue';
 import type { Server, Stats } from '../types';
 import { formatSpeed } from '../utils/format';
+import { t } from '../utils/i18n';
 
 const props = defineProps<{
   servers: Server[];
@@ -177,7 +178,6 @@ const filteredServers = computed(() => {
   });
 });
 
-// Format helpers
 const formatSpeedVal = (bps: number) => {
   if (!bps || bps <= 0) return { val: '0', unit: 'KB/s' };
   if (bps > 1024 * 1024 * 1024) return { val: (bps / (1024 * 1024 * 1024)).toFixed(1), unit: 'GB/s' };
@@ -191,7 +191,6 @@ const formatBytesVal = (bytes: number) => {
   return { val: (bytes / (1024 * 1024 * 1024)).toFixed(1), unit: 'GB' };
 };
 
-// Cluster charts mock history
 const throughputTimestamps = ref<string[]>([]);
 const clusterThroughputSeries = ref<SeriesConfig[]>([]);
 
@@ -212,11 +211,9 @@ const buildChartData = () => {
     const t = new Date(now - i * 5 * 60000);
     times.push(`${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}`);
     
-    // speed
     rxData.push(Math.round(1024 * (8000 + Math.sin(i / 3) * 3500 + Math.random() * 1000)));
     txData.push(Math.round(1024 * (12000 + Math.cos(i / 3) * 5000 + Math.random() * 1500)));
 
-    // latency
     ctData.push(Math.round(22 + Math.random() * 6));
     cuData.push(Math.round(25 + Math.random() * 5));
     cmData.push(Math.round(31 + Math.random() * 8));
@@ -243,19 +240,19 @@ const buildChartData = () => {
   latencyTimestamps.value = times;
   latencySeries.value = [
     {
-      name: 'China Telecom',
+      name: t('ct'),
       data: ctData,
       color: '#5794F2',
       lastValue: `${ctData[ctData.length - 1]} ms`
     },
     {
-      name: 'China Unicom',
+      name: t('cu'),
       data: cuData,
       color: '#FF9830',
       lastValue: `${cuData[cuData.length - 1]} ms`
     },
     {
-      name: 'China Mobile',
+      name: t('cm'),
       data: cmData,
       color: '#73BF69',
       lastValue: `${cmData[cmData.length - 1]} ms`

@@ -20,18 +20,18 @@
     >
       <div class="flex items-center space-x-2">
         <AlertTriangle class="w-4 h-4 text-amber-300 flex-shrink-0" />
-        <span>实时订阅已按后台设定的超时时长主动断开以节省额度，当前显示最后一次快照。</span>
+        <span>{{ t('timeoutNotice') }}</span>
       </div>
       <button
         @click="resumeWebSocket"
         class="bg-amber-700 hover:bg-amber-600 px-3 py-1 rounded text-white font-medium transition-colors"
       >
-        继续连接
+        {{ t('reconnect') }}
       </button>
     </div>
 
     <!-- Main Content View -->
-    <main class="flex-1 max-w-[1920px] w-full mx-auto p-3 min-h-[calc(100vh-80px)]">
+    <main class="flex-1 max-w-[1920px] w-full mx-auto p-2 sm:p-3 min-h-[calc(100vh-80px)]">
       <router-view
         v-if="!initialLoading"
         :servers="servers"
@@ -42,7 +42,7 @@
 
       <div v-else class="h-96 flex flex-col items-center justify-center space-y-3 text-grafana-muted">
         <div class="w-8 h-8 border-2 border-grafana-blue border-t-transparent rounded-full animate-spin"></div>
-        <span class="text-xs">Loading Grafana telemetry...</span>
+        <span class="text-xs">{{ t('loading') }}</span>
       </div>
     </main>
 
@@ -83,6 +83,7 @@ import GrafanaNavbar from './components/grafana/GrafanaNavbar.vue';
 import { apiClient } from './api/client';
 import { wsClient } from './api/ws';
 import type { SiteConfig, Server, Stats, HistoryMetricRow } from './types';
+import { initLanguage, t } from './utils/i18n';
 
 const route = useRoute();
 const router = useRouter();
@@ -197,6 +198,7 @@ onMounted(async () => {
   try {
     const cfg = await apiClient.getConfig();
     siteConfig.value = cfg;
+    initLanguage(cfg?.default_language);
     if (cfg.site_title) {
       document.title = `${cfg.site_title} | Grafana`;
     }

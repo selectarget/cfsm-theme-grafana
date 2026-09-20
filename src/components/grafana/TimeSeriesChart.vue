@@ -3,26 +3,26 @@
     <!-- Chart Canvas -->
     <div ref="chartRef" class="flex-1 min-h-[140px] w-full"></div>
 
-    <!-- Grafana-style Series Legend Table (Optional right-side list) -->
+    <!-- Grafana-style Series Legend Table -->
     <div
       v-if="showLegendTable && seriesList.length"
-      class="w-full md:w-44 border-t md:border-t-0 md:border-l border-[#22252a] pl-2.5 pt-2 md:pt-0 flex flex-col justify-start overflow-y-auto max-h-[160px] text-[11px]"
+      class="w-full md:w-44 border-t md:border-t-0 md:border-l border-[#22252a] px-2 py-1.5 md:py-0 md:pl-2.5 flex flex-col justify-start overflow-y-auto max-h-[140px] md:max-h-[160px] text-[11px]"
     >
       <div class="flex items-center justify-between text-[10px] text-grafana-muted uppercase pb-1 border-b border-[#22252a] font-semibold">
         <span>Name</span>
         <span class="tabular-nums">Last</span>
       </div>
-      <div class="space-y-1 mt-1">
+      <div class="grid grid-cols-2 md:grid-cols-1 gap-1 md:gap-0 md:space-y-1 mt-1">
         <div
           v-for="(item, idx) in seriesList"
           :key="idx"
           class="flex items-center justify-between text-grafana-text hover:text-white cursor-pointer py-0.5"
         >
-          <div class="flex items-center space-x-1.5 truncate max-w-[100px]">
+          <div class="flex items-center space-x-1.5 truncate max-w-[90px] md:max-w-[100px]">
             <span class="w-2 h-0.5 flex-shrink-0" :style="{ backgroundColor: item.color }"></span>
             <span class="truncate text-[10px]" :title="item.name">{{ item.name }}</span>
           </div>
-          <span class="tabular-nums font-medium text-[11px]" :style="{ color: item.color }">
+          <span class="tabular-nums font-medium text-[10px] md:text-[11px]" :style="{ color: item.color }">
             {{ item.lastValue !== undefined ? item.lastValue : '-' }}
           </span>
         </div>
@@ -46,12 +46,12 @@ echarts.use([LineChart, GridComponent, TooltipComponent, LegendComponent, Canvas
 
 export interface SeriesConfig {
   name: string;
-  data: number[] | [number, number][]; // timestamp or value array
+  data: number[] | [number, number][];
   color: string;
   fillOpacity?: number;
   lastValue?: string | number;
   unit?: string;
-  isNegative?: boolean; // 用于负轴镜像
+  isNegative?: boolean;
 }
 
 const props = withDefaults(
@@ -122,10 +122,10 @@ const renderChart = () => {
       }
     },
     grid: {
-      top: 12,
-      left: 36,
-      right: 12,
-      bottom: 22,
+      top: 10,
+      left: 10,
+      right: 10,
+      bottom: 20,
       containLabel: true
     },
     xAxis: {
@@ -135,7 +135,7 @@ const renderChart = () => {
       axisTick: { show: false },
       axisLabel: {
         color: '#767982',
-        fontSize: 10,
+        fontSize: 9,
         formatter: (val: any) => {
           if (typeof val === 'number') {
             const d = new Date(val);
@@ -157,7 +157,7 @@ const renderChart = () => {
       axisTick: { show: false },
       axisLabel: {
         color: '#767982',
-        fontSize: 10,
+        fontSize: 9,
         formatter: (val: number) => {
           if (props.yAxisFormatter) return props.yAxisFormatter(val);
           return `${val}`;
