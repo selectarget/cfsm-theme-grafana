@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --grafana-bg: #111217;
+  --grafana-panel-bg: #181b1f;
+  --grafana-border: #26292e;
+  --grafana-border-hover: #343840;
+  --grafana-text: #d8d9da;
+  --grafana-muted: #8e8e99;
+}
+
+body {
+  background-color: var(--grafana-bg);
+  color: var(--grafana-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Grafana 经典极细深色滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #111217;
+}
+::-webkit-scrollbar-thumb {
+  background: #2b2e35;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3e424d;
+}
+
+/* Grafana 面板卡片统一样式 */
+.grafana-card {
+  background-color: #181b1f;
+  border: 1px solid #26292e;
+  border-radius: 4px;
+  transition: border-color 0.15s ease;
+}
+
+.grafana-card:hover {
+  border-color: #343840;
+}
+
+/* 面板头部 */
+.grafana-card-header {
+  height: 32px;
+  border-bottom: 1px solid #22252a;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.grafana-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ccccdc;
+  letter-spacing: 0.02em;
+}
+
+/* 数字等宽排版 */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* 霓虹发光文字与指标 */
+.glow-green {
+  text-shadow: 0 0 10px rgba(115, 191, 105, 0.45);
+}
+.glow-blue {
+  text-shadow: 0 0 10px rgba(87, 148, 242, 0.45);
+}
+.glow-orange {
+  text-shadow: 0 0 10px rgba(255, 152, 48, 0.45);
+}
+.glow-red {
+  text-shadow: 0 0 10px rgba(242, 73, 92, 0.45);
+}
