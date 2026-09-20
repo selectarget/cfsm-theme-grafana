@@ -84,6 +84,7 @@ import { apiClient } from './api/client';
 import { wsClient } from './api/ws';
 import type { SiteConfig, Server, Stats, HistoryMetricRow } from './types';
 import { initLanguage, t } from './utils/i18n';
+import { initTheme } from './utils/themePresets';
 
 const route = useRoute();
 const router = useRouter();
@@ -199,6 +200,7 @@ onMounted(async () => {
     const cfg = await apiClient.getConfig();
     siteConfig.value = cfg;
     initLanguage(cfg?.default_language);
+    initTheme(cfg?.theme_options?.color_preset);
     if (cfg.site_title) {
       document.title = `${cfg.site_title} | Grafana`;
     }

@@ -11,7 +11,7 @@
 
       <div class="h-4 w-px bg-[#2a2d34] hidden sm:block"></div>
 
-      <!-- Breadcrumb Path (Shortens gracefully on mobile) -->
+      <!-- Breadcrumb Path -->
       <nav class="flex items-center space-x-1 sm:space-x-1.5 text-xs truncate">
         <router-link to="/" class="text-grafana-muted hover:text-white transition-colors hidden md:inline">{{ t('home') }}</router-link>
         <span class="text-grafana-darkmuted hidden md:inline">/</span>
@@ -37,8 +37,45 @@
       </div>
     </div>
 
-    <!-- Right Controls: Language, Time Picker, Refresh, Admin, Fullscreen -->
+    <!-- Right Controls: Theme Palette, Language, Time Picker, Refresh, Admin, Fullscreen -->
     <div class="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+      <!-- Theme Palette Dropdown -->
+      <div class="relative">
+        <button
+          @click="showPaletteMenu = !showPaletteMenu"
+          class="p-1.5 text-grafana-muted hover:text-white bg-[#1b1d22] hover:bg-[#252830] border border-[#2a2e36] rounded transition-colors"
+          title="切换配色主题 (Theme Presets)"
+        >
+          <Palette class="w-3.5 h-3.5 text-grafana-blue" />
+        </button>
+
+        <!-- Palette Dropdown Menu -->
+        <div
+          v-if="showPaletteMenu"
+          class="absolute right-0 mt-1.5 w-52 bg-[#181b22] border border-[#2a2e3a] rounded shadow-2xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100"
+        >
+          <div class="px-3 py-1 text-[10px] uppercase font-bold text-grafana-muted tracking-wider border-b border-[#222530] mb-1">
+            配色方案 / Theme Presets
+          </div>
+          <button
+            v-for="p in themePresets"
+            :key="p.id"
+            @click="selectTheme(p.id)"
+            class="w-full px-3 py-1.5 text-left text-xs flex items-center justify-between hover:bg-[#222632] transition-colors"
+            :class="activeTheme === p.id ? 'text-white font-semibold' : 'text-grafana-muted'"
+          >
+            <div class="flex items-center space-x-2">
+              <span
+                class="w-3 h-3 rounded-full border border-white/20 flex-shrink-0"
+                :style="{ backgroundColor: p.dotColor }"
+              ></span>
+              <span class="text-[11px]">{{ currentLang === 'zh' ? p.nameZh : p.nameEn }}</span>
+            </div>
+            <Check v-if="activeTheme === p.id" class="w-3.5 h-3.5 text-grafana-blue" />
+          </button>
+        </div>
+      </div>
+
       <!-- Language Switcher (ZH / EN) -->
       <button
         @click="toggleLanguage"
@@ -88,7 +125,7 @@
         </select>
       </div>
 
-      <!-- Fullscreen Toggle (Hidden on mobile phones) -->
+      <!-- Fullscreen Toggle -->
       <button
         @click="toggleFullscreen"
         class="hidden md:flex p-1.5 text-grafana-muted hover:text-white bg-[#1b1d22] hover:bg-[#252830] border border-[#2a2e36] rounded transition-colors"
@@ -118,10 +155,13 @@ import {
   RefreshCw,
   Maximize,
   Shield,
-  Languages
+  Languages,
+  Palette,
+  Check
 } from 'lucide-vue-next';
 import type { Server } from '../../types';
 import { t, currentLang, toggleLanguage } from '../../utils/i18n';
+import { themePresets, activeTheme, applyTheme, type ThemePresetId } from '../../utils/themePresets';
 
 withDefaults(
   defineProps<{
@@ -148,6 +188,12 @@ defineEmits<{
 
 const selectedTimeRange = ref<number>(24);
 const refreshInterval = ref<number>(3);
+const showPaletteMenu = ref(false);
+
+const selectTheme = (id: ThemePresetId) => {
+  applyTheme(id, true);
+  showPaletteMenu.value = false;
+};
 
 const toggleFullscreen = () => {
   if (!document.fullscreenElement) {

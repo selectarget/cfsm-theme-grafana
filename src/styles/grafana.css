@@ -2,13 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root, body.theme-classic {
   --grafana-bg: #111217;
   --grafana-panel-bg: #181b1f;
+  --grafana-header-bg: #16181d;
   --grafana-border: #26292e;
   --grafana-border-hover: #343840;
   --grafana-text: #d8d9da;
   --grafana-muted: #8e8e99;
+}
+
+body.theme-cyberpunk {
+  --grafana-bg: #07090e;
+  --grafana-panel-bg: #0d121f;
+  --grafana-header-bg: #121829;
+  --grafana-border: #1d273f;
+  --grafana-border-hover: #00f5d4;
+  --grafana-text: #e2e8f0;
+  --grafana-muted: #798ba8;
+}
+
+body.theme-nordic {
+  --grafana-bg: #181b22;
+  --grafana-panel-bg: #20252f;
+  --grafana-header-bg: #1b2029;
+  --grafana-border: #2d3443;
+  --grafana-border-hover: #88c0d0;
+  --grafana-text: #eceff4;
+  --grafana-muted: #9aa5b8;
+}
+
+body.theme-oled {
+  --grafana-bg: #000000;
+  --grafana-panel-bg: #090a0d;
+  --grafana-header-bg: #101116;
+  --grafana-border: #1c1e24;
+  --grafana-border-hover: #2e323b;
+  --grafana-text: #e0e0e0;
+  --grafana-muted: #80808a;
 }
 
 body {
@@ -16,6 +47,7 @@ body {
   color: var(--grafana-text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Grafana 经典极细深色滚动条 */
@@ -24,7 +56,7 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #111217;
+  background: var(--grafana-bg);
 }
 ::-webkit-scrollbar-thumb {
   background: #2b2e35;
@@ -36,25 +68,27 @@ body {
 
 /* Grafana 面板卡片统一样式 */
 .grafana-card {
-  background-color: #181b1f;
-  border: 1px solid #26292e;
+  background-color: var(--grafana-panel-bg);
+  border: 1px solid var(--grafana-border);
   border-radius: 4px;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.25s ease;
 }
 
 .grafana-card:hover {
-  border-color: #343840;
+  border-color: var(--grafana-border-hover);
 }
 
 /* 面板头部 */
 .grafana-card-header {
   height: 32px;
-  border-bottom: 1px solid #22252a;
+  background-color: var(--grafana-header-bg);
+  border-bottom: 1px solid var(--grafana-border);
   padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   user-select: none;
+  transition: background-color 0.25s ease, border-color 0.15s ease;
 }
 
 .grafana-card-title {
